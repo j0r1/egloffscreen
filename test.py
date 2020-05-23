@@ -1,12 +1,9 @@
-import os
-os.environ["PYOPENGL_PLATFORM"] = "egl" # Make sure EGL is used to query context, not glx
-
-import egloffscreen
+#import egloffscreen
+import egl2 as egloffscreen
 from OpenGL.GL import *
 import numpy as np
 import pickle
 
-print(egloffscreen.init())
 print(glGetString(GL_VERSION))
 
 fbId = glGenFramebuffers(1)
