@@ -71,8 +71,14 @@ bool init()
   eglBindAPI(EGL_OPENGL_API);
 
   // 5. Create a context and make it current
-  EGLContext eglCtx = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT, 
-                                       NULL);
+
+  /*const EGLint contextAttrs[] = {
+		  EGL_CONTEXT_MAJOR_VERSION, 4,
+		  EGL_CONTEXT_MINOR_VERSION, 3,
+          EGL_NONE };*/
+  //
+  EGLContext eglCtx = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT, nullptr);
+                                       //contextAttrs);
 
   eglMakeCurrent(eglDpy, eglSurf, eglSurf, eglCtx);
 
