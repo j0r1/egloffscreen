@@ -1,5 +1,4 @@
-#import egloffscreen
-import egl2 as egloffscreen
+import egloffscreen
 from OpenGL.GL import *
 import numpy as np
 import pickle
