@@ -1,3 +1,5 @@
+# This code is based on https://forums.developer.nvidia.com/t/egl-without-x11/58733/4
+
 import os
 os.environ["PYOPENGL_PLATFORM"] = "egl" # Make sure EGL is used to query context, not glx
 
