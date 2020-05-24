@@ -28,26 +28,29 @@ eglGetProcAddress.restype = c_void_p
 
 eglQueryDevicesEXT = CFUNCTYPE(c_uint, c_int, c_void_p, POINTER(c_int))(eglGetProcAddress(c_char_p(b"eglQueryDevicesEXT")))
 
-eglDevs, numDevs = (c_void_p*4)(None, None, None, None), c_int(0)
+eglDevs, numDevs = (c_void_p*16)(), c_int(0)
 eglQueryDevicesEXT(len(eglDevs), eglDevs, byref(numDevs))
 if numDevs.value < 1:
     raise EGLOffScreenException("No devices detected")
-if numDevs.value > 1:
-    print("Warning: more than one device detected, using first")
 
 eglGetPlatformDisplayEXT = CFUNCTYPE(c_void_p, c_uint, c_void_p, POINTER(c_int))(eglGetProcAddress(c_char_p(b"eglGetPlatformDisplayEXT")))
-eglDpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[0], None)
-if eglDpy is None:
-    raise EGLOffScreenException("No EGL display could be created")
-
-major, minor = c_int(0), c_int(0)
 eglInitialize = EGL.eglInitialize
 eglInitialize.argtypes = (c_void_p, POINTER(c_int), POINTER(c_int))
 eglInitialize.restype = c_uint
 
-if not eglInitialize(eglDpy, byref(major), byref(minor)):
+for devIdx in range(numDevs.value):
+    eglDpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[devIdx], None)
+    if eglDpy is None:
+        raise EGLOffScreenException("No EGL display could be created")
+
+    major, minor = c_int(0), c_int(0)
+    if eglInitialize(eglDpy, byref(major), byref(minor)):
+        break
+else:
     raise EGLOffScreenException("Could not initialize EGL display")
-#print("Major: {} minor: {}".format(major.value, minor.value))
+
+print("Using device idx {} ({})".format(devIdx, numDevs.value))
+print("Major: {} minor: {}".format(major.value, minor.value))
 
 configAttribs = (c_int*13)(
           EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
